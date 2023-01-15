@@ -36,7 +36,7 @@ def ASPP(inputs):
     y1 = BatchNormalization()(y1)
     y1 = Activation("relu")(y1)
     y1 = UpSampling2D((shape[1], shape[2]), interpolation="bilinear")(y1)
-    # y1 = reshape(y1,y1.shape[1:])
+
     
     y1 = Attention()([y1, y1])
  
@@ -45,7 +45,7 @@ def ASPP(inputs):
     y2 = Conv2D(256, 1, padding="same", use_bias=False)(inputs)
     y2 = BatchNormalization()(y2)
     y2 = Activation("relu")(y2)
-    #y2 = reshape(y2, y2.shape[1:])
+
     
     y2 = Attention()([y2, y2])
 
@@ -53,21 +53,21 @@ def ASPP(inputs):
     y3 = Conv2D(256, 3, padding="same", use_bias=False, dilation_rate=6)(inputs)
     y3 = BatchNormalization()(y3)
     y3 = Activation("relu")(y3)
-    #y3 = reshape(y3, y3.shape[1:])
+
     y3 = Attention()([y3, y3])
 
     """ 3x3 conv rate=12 """
     y4 = Conv2D(256, 3, padding="same", use_bias=False, dilation_rate=12)(inputs)
     y4 = BatchNormalization()(y4)
     y4 = Activation("relu")(y4)
-    #y4 = reshape(y4, y4.shape[1:])
+
     y4 = Attention()([y4, y4])
 
     """ 3x3 conv rate=18 """
     y5 = Conv2D(256, 3, padding="same", use_bias=False, dilation_rate=18)(inputs)
     y5 = BatchNormalization()(y5)
     y5 = Activation("relu")(y5)
-    #y5 = reshape(y5, y5.shape[1:])
+
     y5 = Attention()([y5, y5])
 
 
@@ -98,13 +98,7 @@ def build_DLV3SA(shape):
     x_b = BatchNormalization()(x_b)
     x_b = Activation('relu')(x_b)
 
-    # cr_a_b = Attention()([x_a, x_b, x_a])
-    # print(cr_a_b.shape)
-    # cr_b_a = Attention()([x_b, x_a, x_b])
-    # print(cr_b_a.shape)
-
     x = Concatenate()([x_a, x_b])
-    # x = Concatenate()([cr_a_b, cr_b_a])
     x = SqueezeAndExcite(x)
 
 
@@ -115,7 +109,6 @@ def build_DLV3SA(shape):
     x = Conv2D(filters=256, kernel_size=3, padding='same', use_bias=False)(x)
     x = BatchNormalization()(x)
     x = Activation('relu')(x)
-    # x = Attention()([x, x])
     x = SqueezeAndExcite(x)
 
     x = UpSampling2D((4, 4), interpolation="bilinear")(x)
